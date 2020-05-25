@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Welcome!
+{% endblock %}
+
+{% block heading %}
+Login or Signup!
+{% endblock %}
+
+{% block body %}
+    <div class="container-lg justify-content-md-center">
+        <div class="d-inline-flex flex-column bd-highlight mb-3">
+            <input type="text" id="username">
+            <input type="text" id="password">
+            <div class="container align-middle">
+                <button type="button">Signup</button>
+                <button type="button">Login</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
