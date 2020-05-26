@@ -34,20 +34,33 @@ def welcome():
 @app.route("/signup", methods=['POST'])
 def signup():
     if (request.method == "POST"):
+            #get the username and password from the request
             username = request.form["username"]
             password = request.form["password"]
 
+            #get the username/password data for soon to come logic
             people = db.execute("SELECT * FROM \"Accounts\";").fetchall()
-            print(people)
+            
+            #We now see if we already have the user signed up
             for p in people:
                 uTemp = p['username']
                 pTemp = p['password']
+                isloggedin = p['isloggedin']
+                
                 if(uTemp == username and pTemp == password):
+                    #if they are signup already, we check if they are logged in already somewhere else
+                    if isloggedin:
+                        print("user already logged in")
+                        return "user already logged in"
                     print("user logged in instead of a new account being made")
+
+                    #if not, they can full continue to login
+                    db.execute('UPDATE \"Accounts\" SET isloggedin = ' + '\'1\'' + 'WHERE username = \'' + username + '\'AND password = \'' + password + '\');')
+                    db.commit()
                     return login()
-            
-            insertCommand = 'INSERT INTO \"Accounts\" (username, password) VALUES (\'' + username + '\', \'' + password + '\');'
-            print(insertCommand)
+
+            #If the user does not have an account created, we create one for them and sign them in
+            insertCommand = 'INSERT INTO \"Accounts\" (username, password, isloggedin) VALUES (\'' + username + '\', \'' + password + '\', \'1\');'
             db.execute(insertCommand)
             db.commit()
             return book()
@@ -58,6 +71,7 @@ def signup():
 def login():
     print("login")
     return book()
+
 
 @app.route("/book", methods=['GET', 'POST'])
 def book():
