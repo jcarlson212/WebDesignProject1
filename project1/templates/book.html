@@ -1,14 +1,116 @@
 {% extends "layout.html" %}
 
 
+{% block scripts %}
+<script>
+    function logout(){
+        const XHR2 = new XMLHttpRequest();
+        // Define what happens on successful data submission
+        XHR2.addEventListener( 'load', function( event ) {
+            //window.location.href = "{{ url_for('book', )  }}";
+            //XHR.open(XHR.response)
+            document.open();
+            document.write(XHR2.responseText);
+            document.close();
+            console.log(XHR2.responseText);
+        } );
+
+        // Define what happens in case of error
+        XHR2.addEventListener(' error', function( event ) {
+            alert( 'Oops! Something went wrong.' );
+            console.log(event);
+        } );
+
+        // Set up our request (the true means it runs async)
+        XHR2.open( 'POST', '/logout', true);
+
+        //specifies the type of protocol we send and they send respectively
+        XHR2.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+        
+        XHR2.send('username=' + '{{ username }}' + '&password=' + '{{ password }}');
+    }
+
+    function search(){
+        const XHR2 = new XMLHttpRequest();
+        // Define what happens on successful data submission
+        XHR2.addEventListener( 'load', function( event ) {
+            //window.location.href = "{{ url_for('book', )  }}";
+            //XHR.open(XHR.response)
+            //document.open();
+            //document.write(XHR2.responseText);
+            //document.close();
+            console.log(XHR2.responseText);
+            document.getElementById("resultList").innerHTML = XHR2.responseText
+        } );
+
+        // Define what happens in case of error
+        XHR2.addEventListener(' error', function( event ) {
+            alert( 'Oops! Something went wrong.' );
+            console.log(event);
+        } );
+
+        // Set up our request (the true means it runs async)
+        XHR2.open( 'POST', '/search', true);
+
+        //specifies the type of protocol we send and they send respectively
+        XHR2.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+        /*
+        console.log(document.getElementById("isbn").checked);
+        let searchType = ""
+        if(document.getElementById("isbn").checked){
+            searchType = searchType + "1"
+        }else{
+            searchType = searchType + "0"
+        }
+        if(document.getElementById("author").checked){
+            searchType = searchType + "1"
+        }else{
+            searchType = searchType + "0"
+        }
+        if(document.getElementById("title").checked){
+            searchType = searchType + "1"
+        }else{
+            searchType = searchType + "0"
+        }
+        */
+        console.log(document.getElementById("isbn/author/title").value);
+        XHR2.send('searchText=' + document.getElementById("isbn/author/title").value);
+    }
+</script>
+{% endblock %}
+
+
+
 {% block title %}
 Books
 {% endblock %}
+
+
 
 {% block heading %}
 Here are the books young one
 {% endblock %}
 
+
+
 {% block body %}
-<p>Hello {{ username }} and {{ password }}</p>
+    <p>Hello {{ username }} and {{ password }}</p>
+    <button type="button" onclick="logout()">Logout</button>
+
+    <div class="container">
+        <input type="text" id="isbn/author/title">
+        <input type="checkbox" value="isbn">
+        <input type="checkbox" value="author">
+        <input type="checkbox" value="title">
+        <button type="button" onclick="search()">Search</button>
+    </div>
+    <div class="container">
+        <h2>Results:</h2>
+        <ul id="resultList">
+
+        </ul>
+    </div>
+
+
+
 {% endblock %}
