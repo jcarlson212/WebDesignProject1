@@ -31,6 +31,33 @@ db = scoped_session(sessionmaker(bind=engine))
 def welcome():
     return render_template("welcome.html")
 
+@app.route("/search", methods=['POST'])
+def search():
+    if (request.method == "POST"):
+
+        searchText = request.form["searchText"]
+        searchText = searchText.replace("'", "...")
+        books = db.execute("SELECT * FROM \"books\" WHERE title LIKE \'%" + searchText + "%\' OR author LIKE \'%" + searchText + "%\' OR isbn LIKE \'%" + searchText + "%\';").fetchall()
+        print("SELECT * FROM \"books\" WHERE title LIKE \'%" + searchText + "%\' OR author LIKE \'%" + searchText + "%\' OR isbn LIKE \'%" + searchText + "%\';")
+        entries = []
+        for b in books:
+            isbnTemp = b['isbn'].replace("...", "'")
+            titleTemp = b['title'].replace("...", "'")
+            authorTemp = b['author'].replace("...", "'")
+            yearTemp = b['year'].replace("...", "'")
+            entries.append([isbnTemp, titleTemp, authorTemp, yearTemp])
+
+        print(entries)
+        response = ""
+        for entry in entries:
+            response = response + "<li><a href=\"book/" + isbnTemp +"\">"+ entry[0]+ " " + entry[1] + " " + entry[2] + " " + entry[3] + " " +"</a></li>"
+        return response
+        
+    
+    return "not supported (please post)"
+
+
+
 @app.route("/signup", methods=['POST'])
 def signup():
     if (request.method == "POST"):
@@ -55,7 +82,7 @@ def signup():
                     print("user logged in instead of a new account being made")
 
                     #if not, they can full continue to login
-                    db.execute('UPDATE \"Accounts\" SET isloggedin = ' + '\'1\'' + 'WHERE username = \'' + username + '\'AND password = \'' + password + '\');')
+                    db.execute('UPDATE \"Accounts\" SET isloggedin = ' + '\'1\'' + ' WHERE username = \'' + username + '\' AND password = \'' + password + '\';')
                     db.commit()
                     return login()
 
@@ -67,10 +94,30 @@ def signup():
 
     return "not supported (please post)"
 
+
 @app.route("/login")
 def login():
-    print("login")
+    print("flask: logging user in...")
     return book()
+
+
+@app.route("/logout", methods=['POST'])
+def logout():
+    print("flask: logging user out...")
+    if (request.method == "POST"):
+        #get the username and password from the request
+        username = request.form["username"]
+        password = request.form["password"]
+
+        #if not, they can full continue to login
+        db.execute('UPDATE \"Accounts\" SET isloggedin = ' + '\'0\'' + ' WHERE username = \'' + username + '\' AND password = \'' + password + '\';')
+        print('UPDATE \"Accounts\" SET isloggedin = ' + '\'0\'' + ' WHERE username = \'' + username + '\' AND password = \'' + password + '\';')
+        db.commit()
+        return welcome()
+
+    return "not supported (please post)"
+    
+
 
 
 @app.route("/book", methods=['GET', 'POST'])
