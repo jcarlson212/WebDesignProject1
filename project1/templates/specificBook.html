@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block scripts %}
+
+{% endblock %}
+
+
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+
+{% block heading %}
+Reviews on {{ title }} by {{ author }}
+{% endblock %}
+
+
+
+{% block body %}
+    <div style="container">
+        <p>These reviews are in reference to {{ title }} by {{ author }} (isbn {{ isbn }}) written in {{ year }}</p>
+    </div>
+{% endblock %}

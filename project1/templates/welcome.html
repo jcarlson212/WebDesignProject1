@@ -1,59 +1,66 @@
 {% extends "layout.html" %}
 
+{% block scripts %}
+<script>
+    function signup(){
+        console.log("signup");
+        user = document.getElementById("username").value;
+        pass = document.getElementById("password").value;
+        
+        const XHR = new XMLHttpRequest();
+
+        // Define what happens on successful data submission
+        XHR.addEventListener( 'load', function( event ) {
+
+            //window.location.href = "{{ url_for('book', )  }}";
+            //XHR.open(XHR.response)
+            document.open();
+            document.write(XHR.responseText);
+            document.close()
+        } );
+
+        // Define what happens in case of error
+        XHR.addEventListener(' error', function( event ) {
+            alert( 'Oops! Something went wrong.' );
+            console.log(event);
+        } );
+
+        // Set up our request
+        XHR.open( 'POST', '/signup', true);
+
+        XHR.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+
+        let formData = new FormData();
+        console.log(user, pass)
+        XHR.send('username=' + user + '&password=' + pass);
+        //formData.append('password', pass);
+        //XHR.send(formData);
+
+        // Send our FormData object; HTTP headers are set automatically
+        //XHR.send( FD );
+        //window.location.href = "{{ url_for('book', isSignup=true, username=user, password=pass) }}";
+    }
+</script>
+{% endblock %}
+
+
 {% block title %}
 Welcome!
 {% endblock %}
+
 
 {% block heading %}
 Login or Signup!
 {% endblock %}
 
+
 {% block body %}
-    <script>
-        function signup(){
-            console.log("signup");
-            user = document.getElementById("username").value;
-            pass = document.getElementById("password").value;
-            
-            const XHR = new XMLHttpRequest();
-
-            // Define what happens on successful data submission
-            XHR.addEventListener( 'load', function( event ) {
-
-                //window.location.href = "{{ url_for('book', )  }}";
-                //XHR.open(XHR.response)
-                document.write(XHR.responseText);
-            } );
-
-            // Define what happens in case of error
-            XHR.addEventListener(' error', function( event ) {
-                alert( 'Oops! Something went wrong.' );
-                console.log(event);
-            } );
-
-            // Set up our request
-            XHR.open( 'POST', '/signup', true);
-
-            XHR.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
-
-            let formData = new FormData();
-            console.log(user, pass)
-            XHR.send('username=' + user + '&password=' + pass);
-            //formData.append('password', pass);
-            //XHR.send(formData);
-
-            // Send our FormData object; HTTP headers are set automatically
-            //XHR.send( FD );
-            //window.location.href = "{{ url_for('book', isSignup=true, username=user, password=pass) }}";
-        }
-    </script>
     <div class="container-lg justify-content-md-center">
         <div class="d-inline-flex flex-column bd-highlight mb-3">
             <input type="text" id="username">
             <input type="text" id="password">
             <div class="container align-middle">
-                <button type="button" onclick="signup()">Signup</button>
-                <button type="button">Login</button>
+                <button type="button" onclick="signup()">Login/Signup</button>
             </div>
         </div>
     </div>
