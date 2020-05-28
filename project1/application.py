@@ -56,7 +56,15 @@ def search():
     
     return "not supported (please post)"
 
-
+@app.route("/book/<isbn>", methods=['POST', 'GET'])
+def bookSpecific(isbn):
+    books = db.execute("SELECT * FROM \"books\" WHERE isbn = \'" + isbn + "\';").fetchall()
+    if len(books) > 0:
+        book = [books[0]['isbn'].replace("...", "'"), books[0]['title'].replace("...", "'"), books[0]['author'].replace("...", "'"), books[0]['year'].replace("...", "'")]
+        print(book)
+        return render_template("specificBook.html", isbn = book[0], title = book[1], author = book[2], year = book[3])
+    else:
+        return "error: no such book"
 
 @app.route("/signup", methods=['POST'])
 def signup():
